@@ -1,2 +1,12 @@
 This project is the complete implementation for an answer on stackoverflow: https://stackoverflow.com/questions/71091323/crossentropyloss-on-sequences
 
+The goal is to understand what seems to be the best way of computing the nn.CrossEntropyLoss function for sequences, typically for one-hot encoded output of a RNN.
+
+I designed a simple task and trained the same network (same PRNG seed) to learn the task, changing only the way the loss function is computed at each batch.
+
+The task is mainly a classification task: given a sequence of MNIST handwritten numbers, the RNN network has to tell what are the numbers presented to it. To make the task more "sequence-dependent", I also asked the RNN to give me the sum of the sequence of numbers. Since the output of the RNN is one-hot encoded, and I wanted to test only the cross entropy loss function, the sum should be presented by the network as a sequence of two numbers, digits then units.
+
+The results are presented in the files compare_losses.txt, compare_auroc.txt and compare_states.txt. I compared the computes aggregated loss at each epoch, the AUROC for MNIST classification and the actual states of each networks.
+
+###### Conclusion
+The best method seems to be to compute the loss cross entropy loss separately for each element in the sequence, in a loop, then sum. Using the extra parameters for the K-dimensional case of the CrossEntropyLoss function doesn't give as good results as the first method.
